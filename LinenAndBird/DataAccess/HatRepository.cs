@@ -11,23 +11,31 @@ namespace LinenAndBird.DataAccess
         static List<Hat> _hats = new List<Hat> {
             new Hat
             {
+                Id = Guid.NewGuid(),
                 Color = "Blue",
                 Designer = "Charlie",
                 Style = HatStyle.OpenBack
             },
             new Hat
             {
+                Id = Guid.NewGuid(),
                 Color = "Black",
                 Designer = "Nathan",
                 Style = HatStyle.WideBrim
             },
             new Hat
             {
+                Id = Guid.NewGuid(),
                 Color = "Magenta",
                 Designer = "Charlie",
                 Style = HatStyle.OpenBack
             }
         };
+
+        internal Hat GetById(Guid hatId)
+        {
+            return _hats.FirstOrDefault(hat => hat.Id == hatId);
+        }
 
         internal List<Hat> GetAll() // iternal, anybody can use from within the project
         {
@@ -41,7 +49,8 @@ namespace LinenAndBird.DataAccess
 
         internal void Add(Hat newHat)
         {
-            throw new NotImplementedException();
+            newHat.Id = Guid.NewGuid();
+            _hats.Add(newHat);
         }
     }
 }
