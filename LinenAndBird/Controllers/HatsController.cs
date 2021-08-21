@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using LinenAndBird.Models;
+using LinenAndBird.DataAccess;
 
 namespace LinenAndBird.Controllers
 {
@@ -13,41 +14,28 @@ namespace LinenAndBird.Controllers
     [ApiController] // an api controller, so it returns json or xml
     public class HatsController : ControllerBase
     {
-        static List<Hat> _hats = new List<Hat> {
-            new Hat
-            {
-                Color = "Blue",
-                Designer = "Charlie",
-                Style = HatStyle.OpenBack
-            },
-            new Hat
-            {
-                Color = "Black",
-                Designer = "Nathan",
-                Style = HatStyle.WideBrim
-            },
-            new Hat
-            {
-                Color = "Magenta",
-                Designer = "Charlie",
-                Style = HatStyle.OpenBack
-            }
-        };
+        HatRepository _repo;
+        public HatsController()
+        {
+            _repo = new HatRepository();
+        }
+            
         [HttpGet]
         public List<Hat> GetAllHats()
         {
-            return _hats;
+            return _repo.GetAll(); ;
         }
 
         [HttpGet("styles/{style}")]
         public IEnumerable<Hat> GetHatsByStyle(HatStyle style){
-            return _hats.Where(hat => hat.Style == style);
+
+            return _repo.GetByStyle(style);
         }
         
         [HttpPost]
         public void AddAHat(Hat newHat)
         {
-            _hats.Add(newHat);
+            _repo.Add(newHat);
         }
     }
 }
