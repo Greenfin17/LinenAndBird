@@ -36,5 +36,16 @@ namespace LinenAndBird.Controllers
             return Created("/api/birds/1", newBird); // 200 - 299, 201 is created, 204 is accepted,
         }
 
+        [HttpGet("{id}")]
+        public IActionResult GetBirdById(Guid id)
+        {
+            var bird = _repo.GetById(id);
+
+            if (bird == null)
+            {
+                return NotFound($"No bird with the id {id} was found.");
+            }
+            return Ok(bird);
+        }
     }
 }
