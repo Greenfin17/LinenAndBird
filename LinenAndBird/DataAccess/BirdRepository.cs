@@ -127,8 +127,6 @@ namespace LinenAndBird.DataAccess
 
             var reader = command.ExecuteReader();
             // reader can hold only one row of data at a time.
-
-
             if (reader.Read())
             {
                 // Mapping data from the relational model to the object model
