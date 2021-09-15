@@ -33,7 +33,7 @@ namespace LinenAndBird.Controllers
                 return BadRequest("Name and Color are required fields"); //400 range
             }
             _repo.Add(newBird);
-            return Created("/api/birds/1", newBird); // 200 - 299, 201 is created, 204 is accepted,
+            return Created($"/api/birds/{newBird.Id}", newBird); // 200 - 299, 201 is created, 204 is accepted,
         }
 
         [HttpGet("{id}")]
@@ -46,6 +46,30 @@ namespace LinenAndBird.Controllers
                 return NotFound($"No bird with the id {id} was found.");
             }
             return Ok(bird);
+        }
+
+        // api/birds/{id}
+        [HttpDelete("{id}")]
+        public IActionResult DeleteBird(Guid id)
+        {
+            _repo.Remove(id);
+            return Ok();
+        }
+
+        // api/birds/{id}
+        [HttpPut("{id}")]
+        public IActionResult UpdateBird(Guid id, Bird bird)
+        {
+            var birdToUpdate = _repo.GetById(id); 
+            if (birdToUpdate == null)
+            {
+                return NotFound($"Could not find bird with the id {id} for updating.");
+            }
+            var updatedBird = _repo.UpDate(id, bird);
+
+            return Ok(updatedBird);
+
+
         }
     }
 }
