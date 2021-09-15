@@ -35,20 +35,7 @@ namespace LinenAndBird.DataAccess
             while (reader.Read())
             {
                 // Mapping data from the relational model to the object model
-                var birdObj = new Bird();
-                birdObj.Id = reader.GetGuid(0);
-                birdObj.Size = reader["Size"].ToString(); 
-                // explicit casting 
-                // birdObj.Type = (BirdType) reader["Type"];
-                // check for error
-                if(Enum.TryParse<BirdType>(reader["Type"].ToString(), out var birdType))
-                {
-                    birdObj.Type = birdType;
-                }
-
-                birdObj.Name = reader["Name"].ToString();
-
-                // each bird goes in the list of birds
+                var birdObj = MapFromReader(reader);
                 birds.Add(birdObj);
             }
 
