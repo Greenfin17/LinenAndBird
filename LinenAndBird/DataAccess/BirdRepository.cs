@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using LinenAndBird.Models;
 using Microsoft.Data.SqlClient;
+using Dapper;
 
 namespace LinenAndBird.DataAccess
 {
@@ -14,32 +15,9 @@ namespace LinenAndBird.DataAccess
         {
             // using keyword means to close the object when leaving set of braces, and close the connection
             // i-disposable - makes ready for garbage collector
-            using var connection = new SqlConnection(_connectionString);
-            // connection must be opened, not open by default
-            connection.Open();
-
-            // ADO.NET SQL COMMANDS
-            // Tells SQL what we want to do.
-            var command = connection.CreateCommand();
-            command.CommandText = @"Select * 
-                                    From Birds";
-
-            // execute reader is for when we care about gettin gall the results of our query
-            var reader = command.ExecuteReader();
-            // reader can hold only one row of data at a time.
-
-            var birds = new List<Bird>();
-
-            // advances data reader to next record
-            // no record initially, must execute Reader
-            while (reader.Read())
-            {
-                // Mapping data from the relational model to the object model
-                var birdObj = MapFromReader(reader);
-                birds.Add(birdObj);
-            }
-
-
+            using var db = new SqlConnection(_connectionString);
+            // Query<T> is for getting results from database and putting them into C# type
+            var birds = db.Query<Bird>(@"Select * From Birds"); // replaces all of previous following commands
             return birds;
         }
 
