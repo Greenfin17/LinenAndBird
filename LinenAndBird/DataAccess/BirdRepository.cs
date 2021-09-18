@@ -23,8 +23,21 @@ namespace LinenAndBird.DataAccess
 
         internal Bird UpDate(Guid id, Bird bird)
         {
-            using var connection = new SqlConnection(_connectionString);
-            connection.Open();
+            using var db = new SqlConnection(_connectionString);
+            var sql = @"update Birds
+                        Set Color = @color,
+	                        Name = @name,
+	                        Type = @type,
+	                        Size = @size
+                        output inserted.*
+                        Where id = @id";
+
+            bird.Id = id;
+            var updatedBird = db.QuerySingleOrDefault<Bird>(sql, bird);
+            return updatedBird;
+
+
+            /*
             var cmd = connection.CreateCommand();
             cmd.CommandText = @"update Birds
                                     Set Color = @color,
@@ -34,10 +47,10 @@ namespace LinenAndBird.DataAccess
                                 output inserted.*
                                 Where id = @id";
 
-            cmd.Parameters.AddWithValue("Color", bird.Color);
-            cmd.Parameters.AddWithValue("Name", bird.Name);
             cmd.Parameters.AddWithValue("Type", bird.Type);
+            cmd.Parameters.AddWithValue("Color", bird.Color);
             cmd.Parameters.AddWithValue("Size", bird.Size);
+            cmd.Parameters.AddWithValue("Name", bird.Name);
             cmd.Parameters.AddWithValue("Id", id);
 
             var reader = cmd.ExecuteReader();
@@ -48,95 +61,46 @@ namespace LinenAndBird.DataAccess
                 return birdObj;
             }
             return null;
-
+*/
         }
 
         internal void Remove(Guid id)
         {
-            using var connection = new SqlConnection(_connectionString);
-            connection.Open();
-            var cmd = connection.CreateCommand();
-            cmd.CommandText = @"Delete from Birds
+            using var db = new SqlConnection(_connectionString);
+            var sql  = @"Delete from Birds
                                 Where Id = @id";
-            cmd.Parameters.AddWithValue("id", id);
-            cmd.ExecuteNonQuery();
+            // anonymous object shorthand where property name is the same as the variable name
+            db.Execute(sql, new { id });
         }
 
         internal void Add(Bird newBird)
         {
-            using var connection = new SqlConnection(_connectionString);
-            connection.Open();
-            var cmd = connection.CreateCommand();
-            cmd.CommandText = $@"insert into birds(Type, Color, Size, Name)
+            using var db = new SqlConnection(_connectionString);
+            var sql = @"insert into birds(Type, Color, Size, Name)
                                 output inserted.Id
                                 values(@Type, @Color, @Size, @Name)";
-            cmd.Parameters.AddWithValue("Type", newBird.Type);
-            cmd.Parameters.AddWithValue("Color", newBird.Color);
-            cmd.Parameters.AddWithValue("Size", newBird.Size);
-            cmd.Parameters.AddWithValue("Name", newBird.Name);
 
-            // execute query, but don't care about results, just number of rows 
-            // var numberOfRowsAffected = cmd.ExecuteNonQuery();
-           
-            // exute query, but only get the id of the new row.
-            var newId = (Guid) cmd.ExecuteScalar();
-            newBird.Id = newId;
-            
-            // newBird.Id = Guid.NewGuid();
-            //_birds.Add(newBird);
+            var id = db.ExecuteScalar<Guid>(sql, newBird);
+            newBird.Id = id;
         }
 
         // prevent SQL injection with parameterization
         internal Bird GetById(Guid birdId)
         {
-            using var connection = new SqlConnection(_connectionString);
-            connection.Open();
-            var command = connection.CreateCommand();
-            // subject to SQL injection -- don't use
-            //command.CommandText = $@"Select * 
-            //                        From Birds
-            //                        Where id = {birdId}";
-            command.CommandText = @"Select * 
-                                    From Birds
-                                    Where id = @id";
+            using var db = new SqlConnection(_connectionString);
+            db.Open();
+            var command = db.CreateCommand();
 
-            // paramaterization to prevent SQL injection
-            command.Parameters.AddWithValue("id", birdId);
+            var sql =  @"Select * 
+                         From Birds
+                         Where id = @id";
 
-            var reader = command.ExecuteReader();
-            // reader can hold only one row of data at a time.
-            if (reader.Read())
-            {
-                // Mapping data from the relational model to the object model
-                var birdObj = new Bird();
-                birdObj.Id = reader.GetGuid(0);
-                birdObj.Size = reader["Size"].ToString();
-                // explicit casting
-                // birdObj.Type = (BirdType) reader["Type"];
-                // check for error
-                if(Enum.TryParse<BirdType>(reader["Type"].ToString(), out var birdType))
-                {
-                    birdObj.Type = birdType;
-                }
+            // object property name must match parameter / sql variable name
+            // equivalent to: command.Parameters.AddWithValue("id", birdId);
 
-                birdObj.Name = reader["Name"].ToString();
-                return birdObj;
-            }
+            // db.QuerySingle = should be exactly one match
+            var bird = db.QuerySingleOrDefault<Bird>(sql, new { id = birdId });
 
-            return null;
-            // birdsObj.FirstOrDefault(bird => bird.Id == birdId);
-        }
-
-        Bird MapFromReader(SqlDataReader reader)
-        {
-            var bird = new Bird();
-            bird.Id = reader.GetGuid(0);
-            bird.Size = reader["Size"].ToString(); 
-            if(Enum.TryParse<BirdType>(reader["Type"].ToString(), out var birdType))
-            {
-                bird.Type = birdType;
-            }
-            bird.Name = reader["Name"].ToString();
             return bird;
         }
     }
