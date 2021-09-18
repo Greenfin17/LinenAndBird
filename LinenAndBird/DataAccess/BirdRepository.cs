@@ -69,7 +69,7 @@ namespace LinenAndBird.DataAccess
             using var db = new SqlConnection(_connectionString);
             var sql  = @"Delete from Birds
                                 Where Id = @id";
-            // anonymous object shorthand where property name is the same as the variable name
+
             db.Execute(sql, new { id });
         }
 
