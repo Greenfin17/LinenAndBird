@@ -10,6 +10,7 @@ namespace LinenAndBird.DataAccess
 {
     public class HatRepository
     {
+        // not customary to hard code a connection string
         const string _connectionString = "Server = localhost; Database = LinenAndBird; Trusted_Connection = True";
         static List<Hat> _hats = new List<Hat> {
             new Hat

@@ -18,6 +18,18 @@ namespace LinenAndBird.DataAccess
             using var db = new SqlConnection(_connectionString);
             // Query<T> is for getting results from database and putting them into C# type
             var birds = db.Query<Bird>(@"Select * From Birds"); // replaces all of previous following commands
+
+            // add accessories, avoid n+1 problem
+            var accessorySql = @"Select * From BirdAccessories";
+
+            var accessories = db.Query<BirdAccessory>(accessorySql);
+
+            foreach(var bird in birds)
+            {
+                bird.Accessories = accessories.Where(accesory => accesory.BirdId == bird.Id);
+            }
+            // or use accessories.Join
+
             return birds;
         }
 
@@ -87,11 +99,10 @@ namespace LinenAndBird.DataAccess
         // prevent SQL injection with parameterization
         internal Bird GetById(Guid birdId)
         {
+            // get one to many relationships using 2 separate queries;
             using var db = new SqlConnection(_connectionString);
-            db.Open();
-            var command = db.CreateCommand();
 
-            var sql =  @"Select * 
+            var birdSql = @"Select * 
                          From Birds
                          Where id = @id";
 
@@ -99,9 +110,31 @@ namespace LinenAndBird.DataAccess
             // equivalent to: command.Parameters.AddWithValue("id", birdId);
 
             // db.QuerySingle = should be exactly one match
-            var bird = db.QuerySingleOrDefault<Bird>(sql, new { id = birdId });
+            var bird = db.QuerySingleOrDefault<Bird>(birdSql, new { id = birdId });
 
+            if (bird == null) return null;
+
+            // lets get the accessories for the bird
+            var accessorySql = @"Select *
+                                 From BirdAccessories
+                                 Where birdId = @birdId";
+
+            var accessories = db.Query<BirdAccessory>(accessorySql, new { birdId = birdId});
+            bird.Accessories = accessories;
+            
             return bird;
+        }
+        internal void PopulateAccessories(Bird bird)
+        {
+            using var db = new SqlConnection(_connectionString);
+            var accessorySql = @"Select *
+                                 From BirdAccessories
+                                 Where birdId = @birdId";
+            if (bird != null)
+            {
+                var accessories = db.Query<BirdAccessory>(accessorySql, new { birdId = bird.Id});
+                bird.Accessories = accessories;
+            }
         }
     }
 }
