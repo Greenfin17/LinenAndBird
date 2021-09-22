@@ -5,13 +5,18 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Data.SqlClient;
 using Dapper;
+using Microsoft.Extensions.Configuration;
 
 namespace LinenAndBird.DataAccess
 {
     public class HatRepository
     {
         // not customary to hard code a connection string
-        const string _connectionString = "Server = localhost; Database = LinenAndBird; Trusted_Connection = True";
+        readonly string _connectionString;
+        public HatRepository(IConfiguration config)
+        {
+            _connectionString = config.GetConnectionString("LinenAndBird");
+        }
         static List<Hat> _hats = new List<Hat> {
             new Hat
             {

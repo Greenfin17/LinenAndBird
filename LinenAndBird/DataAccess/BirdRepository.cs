@@ -5,12 +5,19 @@ using System.Threading.Tasks;
 using LinenAndBird.Models;
 using Microsoft.Data.SqlClient;
 using Dapper;
+using Microsoft.Extensions.Configuration;
 
 namespace LinenAndBird.DataAccess
 {
     public class BirdRepository
     {
-        const string _connectionString = "Server = localhost; Database = LinenAndBird; Trusted_Connection = True";
+        readonly string _connectionString;
+
+        // http request => IConfiguration -> BirdRepository -> BirdController
+        public BirdRepository(IConfiguration config)
+        {
+            _connectionString = config.GetConnectionString("LinenAndBird");
+        }
         internal IEnumerable<Bird> GetAll()
         {
             // using keyword means to close the object when leaving set of braces, and close the connection

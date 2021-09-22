@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using LinenAndBird.Models;
 using LinenAndBird.DataAccess;
+using Microsoft.Extensions.Configuration;
 
 namespace LinenAndBird.Controllers
 {
@@ -14,9 +15,21 @@ namespace LinenAndBird.Controllers
     public class BirdController : ControllerBase
     {
         BirdRepository _repo;
-        public BirdController()
+
+        // add parameter to constructor to ask for the configuration
+        /* from: services.AddSingleton<IConfiguration>(Configuration); /* -> any time someone asks for this thing,
+                                                                             in startup.cs */
+        // known as Dependency Injection - can't work without a configuration file
+
+        // Startup.cs addTransient
+        public BirdController(BirdRepository repo)
         {
-            _repo = new BirdRepository();
+            _repo = repo;
+            /* AddSingleton code: 
+            var connectionString = config.GetConnectionString("LinenAndBird");
+            _repo = new BirdRepository(connectionString);
+            */
+
         }
 
         [HttpGet]
