@@ -14,8 +14,8 @@ namespace LinenAndBird.Controllers
     [ApiController] // an api controller, so it returns json or xml
     public class HatsController : ControllerBase
     {
-        HatRepository _repo;
-        public HatsController(HatRepository hatRepo)
+        IHatRepository _repo;
+        public HatsController(IHatRepository hatRepo)
         {
             _repo = hatRepo;
         }

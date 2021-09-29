@@ -9,7 +9,8 @@ using Microsoft.Extensions.Configuration;
 
 namespace LinenAndBird.DataAccess
 {
-    public class HatRepository
+    // moving to implementation of interface to allow controller testing.
+    public class HatRepository : IHatRepository
     {
         // not customary to hard code a connection string
         readonly string _connectionString;
@@ -42,7 +43,7 @@ namespace LinenAndBird.DataAccess
         };
 
         //internal Hat GetById(Guid hatId)
-        internal Hat GetById(Guid hatId)
+        public Hat GetById(Guid hatId)
         {
             // create connection
             using var db = new SqlConnection(_connectionString);
@@ -59,7 +60,7 @@ namespace LinenAndBird.DataAccess
             return hat;
         }
 
-        internal IEnumerable<Hat> GetAll() // iternal, anybody can use from within the project
+        public IEnumerable<Hat> GetAll() // iternal, anybody can use from within the project
         {
             var db = new SqlConnection(_connectionString);
             var sql = "Select * from Hats";
@@ -68,12 +69,12 @@ namespace LinenAndBird.DataAccess
 
         }
 
-        internal IEnumerable<Hat> GetByStyle(HatStyle style)
+        public IEnumerable<Hat> GetByStyle(HatStyle style)
         {
             return _hats.Where(hat => hat.Style == style);
         }
 
-        internal void Add(Hat newHat)
+        public void Add(Hat newHat)
         {
             var db = new SqlConnection(_connectionString);
             var sql = @"Insert into Hats(Designer, Color, Style)
