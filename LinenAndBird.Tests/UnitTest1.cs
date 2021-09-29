@@ -25,8 +25,13 @@ namespace LinenAndBird.Tests
             
             Assert.NotNull(resultObj);
             Assert.True(resultObj is OkObjectResult);
+
+            // _repo.GetAll() returns an IEnumerable, but lists implement IEnumerable
             Assert.IsType<List<Hat>>(resultObj.Value);
+
+            // model will contain the list return from the IActionResult
             var model = Assert.IsAssignableFrom<List<Hat>>(resultObj.Value);
+
             Assert.Equal(StatusCodes.Status200OK, resultObj.StatusCode);
             Assert.Equal(3, model.Count);
 
