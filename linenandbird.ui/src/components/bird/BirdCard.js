@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from 'prop-types';
 
 export default function BirdCard({bird}){
   return (
@@ -9,3 +10,6 @@ export default function BirdCard({bird}){
       </div>
   )
 }
+BirdCard.propTypes = {
+  bird: PropTypes.object
+};

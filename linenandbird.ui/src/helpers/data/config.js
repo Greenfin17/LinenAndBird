@@ -1,6 +1,6 @@
 const lbConfig =
 {
-  baseUrl : process.env.BASE_URL
+  baseUrl : process.env.REACT_APP_API_URL
 };
 
 export default lbConfig;
