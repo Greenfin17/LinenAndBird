@@ -13,6 +13,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using LinenAndBird;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 
 namespace LinenAndBird
 {
@@ -40,6 +42,22 @@ namespace LinenAndBird
             services.AddTransient<OrdersRepository>(); // create a new thing anytime someone asks
             // if someone asks for an IHatRepository, give them a real repository.
             services.AddTransient<IHatRepository, HatRepository>(); // create a new thing anytime someone asks
+
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                 .AddJwtBearer(options =>
+                 {
+                     options.IncludeErrorDetails = true;
+                     options.Authority = "https://securetoken.google.com/fish-store-a71e6";
+                     options.TokenValidationParameters = new TokenValidationParameters
+                     {
+                         ValidateLifetime = true,
+                         ValidateAudience = true,
+                         ValidateIssuer = true,
+                         ValidAudience = "fish-store-a71e6",
+                         ValidIssuer = "https://securetoken.google.com/fish-store-a71e6"
+                     };
+                 });
+            
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
@@ -61,6 +79,8 @@ namespace LinenAndBird
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseAuthentication();
 
             app.UseAuthorization();
 

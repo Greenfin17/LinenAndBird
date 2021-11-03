@@ -7,12 +7,14 @@ using System.Threading.Tasks;
 using LinenAndBird.Models;
 using LinenAndBird.DataAccess;
 using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Authorization;
 
 namespace LinenAndBird.Controllers
 {
     [Route("api/birds")]
     [ApiController]
-    public class BirdController : ControllerBase
+    [Authorize]
+    public class BirdController : FirebaseController 
     {
         BirdRepository _repo;
 
@@ -33,11 +35,16 @@ namespace LinenAndBird.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public IActionResult GetAllBirds()
         {
+            // var fbUserId = User.FindFirst(claim => claim.Type == "user_id").Value;
+            var uid = GetFirebaseUid();
             return Ok(_repo.GetAll());
         }
 
+        // per endpoint authorization
+        // [Authorize]
         [HttpPost]
         public IActionResult AddBird(Bird newBird)
         {
