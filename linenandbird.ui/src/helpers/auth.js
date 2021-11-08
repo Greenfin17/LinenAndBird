@@ -1,4 +1,4 @@
-import { firebase } from 'firebase/compat/auth';
+import firebase from 'firebase/compat/app';
 import axios from 'axios';
 
 // create something that modifies a request as it goes out,
