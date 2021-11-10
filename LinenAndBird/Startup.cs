@@ -47,14 +47,14 @@ namespace LinenAndBird
                  .AddJwtBearer(options =>
                  {
                      options.IncludeErrorDetails = true;
-                     options.Authority = "https://securetoken.google.com/fish-store-a71e6";
+                     options.Authority = "https://securetoken.google.com/sports-roster-42025";
                      options.TokenValidationParameters = new TokenValidationParameters
                      {
                          ValidateLifetime = true,
                          ValidateAudience = true,
                          ValidateIssuer = true,
-                         ValidAudience = "fish-store-a71e6",
-                         ValidIssuer = "https://securetoken.google.com/fish-store-a71e6"
+                         ValidAudience = "sports-roster-42025",
+                         ValidIssuer = "https://securetoken.google.com/sports-roster-42025"
                      };
                  });
             
@@ -76,12 +76,10 @@ namespace LinenAndBird
             }
 
             app.UseCors(cfg => cfg.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
+
             app.UseHttpsRedirection();
-
             app.UseRouting();
-
             app.UseAuthentication();
-
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

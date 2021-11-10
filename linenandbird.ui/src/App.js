@@ -1,6 +1,9 @@
 // import logo from './logo.svg';
 import { useEffect, useState } from 'react';
-import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/auth';
+import 'firebase/compat/firestore';
+// import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import './App.css';
 import BirdList from './components/bird/BirdList';
 import { getAllBirds } from './helpers/data/birdData';
@@ -12,18 +15,19 @@ function App() {
   const [user, setUser] = useState({});
 
   useEffect(() => {
-  const auth = getAuth();
-  onAuthStateChanged(auth, (userObj) => {
-    console.warn(userObj);
-    if (user) {
-      // store JWT token for later
-      user.getIdToken().then((token) => sessionStorage('token', token));
-      setUser(user);
-    } else {
-      setUser(false);
-    }
-    })
-  });
+    firebase.auth().onAuthStateChanged((userObj) => {
+      if (userObj) {             
+        
+        //store the token for later   
+        userObj.getIdToken().then((token) => sessionStorage.setItem("token", token));
+        
+        setUser(userObj);
+      } else {
+        setUser(false);
+      }
+      console.warn(user);
+    });
+  }, );  
 
   useEffect(() => 
     {

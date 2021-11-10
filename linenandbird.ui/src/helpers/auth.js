@@ -3,7 +3,9 @@ import axios from 'axios';
 
 // create something that modifies a request as it goes out,
 // adding a header to it with the token
-axios.interceptor.request.use((request) => {
+
+axios.interceptors.request.use((request) => {
+   // eslint-disable-next-line no-undef
   const token = sessionStorage.getItem('token');
 
   if (token != null) {
@@ -27,6 +29,7 @@ const signInUser = () => {
         email: user.user?.email
       };
       // add the user to your api and database
+      console.warn(userInfo);
       window.location.href = '/';
     }
   });

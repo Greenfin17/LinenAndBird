@@ -35,7 +35,6 @@ namespace LinenAndBird.Controllers
         }
 
         [HttpGet]
-        [AllowAnonymous]
         public IActionResult GetAllBirds()
         {
             // var fbUserId = User.FindFirst(claim => claim.Type == "user_id").Value;
