@@ -26,6 +26,19 @@ namespace LinenAndBird.DataAccess
             return users;
         }
 
+        internal User GetById(Guid userId)
+        {
+            using var db = new SqlConnection(_connectionString);
+            var sql = @"SELECT * FROM User
+                         WHERE Id = @Id";
+            var parameter = new
+            {
+                Id = userId
+            };
+            var user = db.QueryFirstOrDefault<User>(sql, parameter);
+            return user;
+        }
+
         internal Guid AddUser(User newUser)
         {
             using var db = new SqlConnection(_connectionString);
