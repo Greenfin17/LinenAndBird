@@ -24,7 +24,6 @@ namespace LinenAndBird.Controllers
 
 
         [HttpGet]
-        [AllowAnonymous]
         public IActionResult GetAllUsers()
         {
             var fbUserId = User.FindFirst(claim => claim.Type == "user_id").Value;
@@ -45,7 +44,6 @@ namespace LinenAndBird.Controllers
         }
 
         [HttpPost]
-        [AllowAnonymous]
         public IActionResult AddUser(User userObj)
         {
             if (string.IsNullOrEmpty(userObj.DisplayName) || string.IsNullOrEmpty(userObj.ImageUrl)
